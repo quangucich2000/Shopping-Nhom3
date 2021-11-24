@@ -8,7 +8,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
                 
         <property name="java-output-path" value="/Shopping-Nhom3/build/classes"/>
-        <property name="context-root" value="GroupManagementFinal"/>
+        <property name="context-root" value="Shopping"/>
             
     </wb-module>
     
