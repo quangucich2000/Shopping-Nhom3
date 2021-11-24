@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class DatabaseProperties {
 
-	public static final String RESOURCE_FOLDER_URL = "C:\\Users\\Quang Le\\eclipse-workspace\\Shopping\\src\\main\\java\\resources\\";
+	public static final String RESOURCE_FOLDER_URL = "C:\\Users\\Quang Le\\eclipse-workspace\\Shopping-Nhom3\\src\\main\\java\\resources\\";
 
 	private Properties properties;
 
