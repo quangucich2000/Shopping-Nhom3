@@ -26,7 +26,7 @@
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<li><a onclick="clickNavOrder()" class="dropdown-item" href="#">Order</a></li>
 						<li><a onclick="clickNavAccount()" class="dropdown-item" href="#">Account</a></li>
-						<li><a class="dropdown-item" href="#">Another action</a></li>
+						<li><a onclick="clickNavBook()" class="dropdown-item" href="#">Book</a></li>
 					</ul></li>
 					
 				<li id="customer-controller" class="nav-item dropdown"><a

@@ -89,6 +89,10 @@ function clickNavAccount() {
 	location.replace("./account")
 }
 
+function clickNavBook() {
+	location.replace("./bookManager")
+}
+
 function clickNavLogin() {
 	location.replace("./login")
 }
