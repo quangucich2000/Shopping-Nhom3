@@ -20,6 +20,11 @@ public class Account {
 		super();
 	}
 	
+	public Account(int id) {
+		super();
+		this.id = id;
+	}
+	
 	public Account(int id, String username) {
 		super();
 		this.id = id;

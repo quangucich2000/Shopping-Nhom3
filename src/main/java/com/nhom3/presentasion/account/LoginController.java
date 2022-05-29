@@ -14,9 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.nhom3.entity.User.Address;
+import com.nhom3.entity.User.FullName;
 import com.nhom3.entity.User.User;
-import com.nhom3.logicApplication.IUserRepository;
-import com.nhom3.logicApplication.UserRepository;
+import com.nhom3.logicApplication.IUserDAO;
+import com.nhom3.logicApplication.UserDAO;
 
 
 /**
@@ -26,7 +28,7 @@ import com.nhom3.logicApplication.UserRepository;
 public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private IUserRepository userRepository;
+	private IUserDAO userRepository;
 	
 	/**
 	 * @throws ServletException 
@@ -35,7 +37,7 @@ public class LoginController extends HttpServlet {
 	public LoginController() throws ServletException {
 		super.init();
 		try {
-			userRepository = new UserRepository();
+			userRepository = new UserDAO();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -66,8 +68,13 @@ public class LoginController extends HttpServlet {
 			User user = userRepository.login(username, password);
 			if(user !=null ) {
 				//save cookie
+				User fullInforUser = userRepository.getUserByIdAccount(user.getAccount().getId());
+				FullName fullName = userRepository.getFullNameById(fullInforUser.getFullName().getId());
+				Address address = userRepository.getAddressByID(fullInforUser.getAddress().getId());
+				
 				addCookie(response, "username", user.getAccount().getUsername().trim());
-				//addCookie(response, "fullname", user.getAccount().getFullName().trim());
+				addCookie(response, "fullname", fullName.getFirstName()+fullName.getLastName()+fullName.getMiddleName());
+				addCookie(response, "address", address.getNumber() + address.getDistrict());
 				//addCookie(response, "role", user.getRole().trim());
 				response.sendRedirect("http://localhost:8080/Shopping/Home");
 			}else { 
@@ -80,6 +87,9 @@ public class LoginController extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

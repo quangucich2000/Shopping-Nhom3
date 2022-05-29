@@ -13,25 +13,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.nhom3.entity.User.User;
-import com.nhom3.logicApplication.IUserRepository;
-import com.nhom3.logicApplication.UserRepository;
+import com.nhom3.logicApplication.IUserDAO;
+import com.nhom3.logicApplication.UserDAO;
 
 /**
  * Servlet implementation class AccountController
  */
 @WebServlet("/account")
-public class AccountController extends HttpServlet {
+public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1;
-	private IUserRepository userRepository;
+	private IUserDAO userRepository;
 
 	/**
 	 * @throws ServletException
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public AccountController() throws ServletException {
+	public UserController() throws ServletException {
 		super.init();
 		try {
-			userRepository = new UserRepository();
+			userRepository = new UserDAO();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,19 +60,19 @@ public class AccountController extends HttpServlet {
 
 		try {
 			switch (action) {
-			case "/new":
+			case "/newUser":
 				showNewForm(request, response);
 				break;
-			case "/insert":
+			case "/insertUser":
 				insertUser(request, response);
 				break;
-			case "/delete":
+			case "/deleteUser":
 				deleteUser(request, response);
 				break;
-			case "/edit":
+			case "/editUser":
 				showEditForm(request, response);
 				break;
-			case "/update":
+			case "/updateUser":
 				updateUser(request, response);
 				break;
 			default:
@@ -91,6 +91,7 @@ public class AccountController extends HttpServlet {
 			throws SQLException, IOException, ServletException, ClassNotFoundException {
 		List<User> listUser = userRepository.getListUsers();
 		request.setAttribute("listUser", listUser);
+		System.out.print(listUser.toString());
 		RequestDispatcher dispatcher = request.getRequestDispatcher("jsp/user-list.jsp");
 		dispatcher.forward(request, response);
 	}

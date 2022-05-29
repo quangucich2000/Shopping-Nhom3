@@ -12,6 +12,7 @@ package com.nhom3.entity.User;
  * @modifer_date: Nov 22, 2021
  */
 public class Address {
+	private int id;
 	private int number;
 	private String street;
 	private String district;
@@ -20,6 +21,11 @@ public class Address {
 	public Address() {
 		super();
 	}
+	
+	public Address(int id) {
+		super();
+		this.id = id;
+	}
 
 	public Address(int number, String street, String district, String city) {
 		super();
@@ -27,6 +33,24 @@ public class Address {
 		this.street = street;
 		this.district = district;
 		this.city = city;
+	}
+	
+	public Address(int id,int number, String street, String district, String city) {
+		super();
+		this.id = id;
+		this.number = number;
+		this.street = street;
+		this.district = district;
+		this.city = city;
+	}
+	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getNumber() {

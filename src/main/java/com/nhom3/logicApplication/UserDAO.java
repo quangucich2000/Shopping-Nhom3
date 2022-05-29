@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nhom3.entity.User.Account;
+import com.nhom3.entity.User.Address;
+import com.nhom3.entity.User.FullName;
 import com.nhom3.entity.User.User;
 import com.nhom3.ultils.JdbcUtils;
 import com.nhom3.ultils.properties.MessageProperties;
@@ -24,12 +26,12 @@ import com.nhom3.ultils.properties.MessageProperties;
  * @modifer: NNDuy
  * @modifer_date: May 28, 2020
  */
-public class UserRepository implements IUserRepository {
+public class UserDAO implements IUserDAO {
 
 	private JdbcUtils jdbcUtils;
 	private MessageProperties messageProperties;
 
-	public UserRepository() throws IOException {
+	public UserDAO() throws IOException {
 		jdbcUtils = new JdbcUtils();
 		messageProperties = new MessageProperties();
 	}
@@ -46,8 +48,12 @@ public class UserRepository implements IUserRepository {
 		Connection connection = jdbcUtils.connect();
 
 		// create a statement object
-		String sql = 	"SELECT `id`,	`username`, CONCAT(`firstName`,	`lastName`) AS fullName, `role` " + 
-						"FROM 	`User`";
+		String sql = "SELECT u.ID, u.Mobile, u.Sex, u.DateOfBirth, f.FirstName, f.MiddleName, f.LastName, a.Username, a.`Password`, ad.`Number`,ad.Street, ad.District , ad.City \r\n"
+				+ "FROM `user` u \r\n"
+				+ "	join fullname f \r\n"
+				+ "	join `account` a \r\n"
+				+ "    join address ad\r\n"
+				+ "where u.FullnameID = f.ID and u.AccountID = a.ID and u.AddressID = ad.ID;";
 		Statement statement = connection.createStatement();
 
 		// execute query
@@ -55,13 +61,24 @@ public class UserRepository implements IUserRepository {
 
 		// Handing result set
 		while (resultSet.next()) {
-//			User user = new User(
-//					resultSet.getInt("id"), 
-//					resultSet.getString("username"),
-//					resultSet.getString("fullName"), 
-//					resultSet.getString("role"));
-
-			users.add(null);
+			User user = new User(
+					resultSet.getInt("ID"), 
+					resultSet.getString("Mobile"), 
+					resultSet.getString("Sex"),
+					resultSet.getString("DateOfBirth"));
+			FullName fullName = new FullName(
+					resultSet.getString("FirstName"), 
+					resultSet.getString("MiddleName"), 
+					resultSet.getString("LastName"));
+			Address address = new Address(
+					resultSet.getInt("Number"),
+					resultSet.getString("Street"),
+					resultSet.getString("District"),
+					resultSet.getString("City")
+					);
+			user.setFullName(fullName);
+			user.setAddress(address);
+			users.add(user);
 		}
 
 		// disconnect
@@ -79,9 +96,12 @@ public class UserRepository implements IUserRepository {
 		Connection connection = jdbcUtils.connect();
 
 		// Create a statement object
-		String sql = 	"SELECT `id`,	`username`, CONCAT(`firstName`,	`lastName`) AS fullName, `role` " + 
-						"FROM 	`User` " + 
-						"WHERE 	`id` = ?";
+		String sql = "SELECT u.ID, u.Mobile, u.Sex, u.DateOfBirth, f.FirstName, f.MiddleName, f.LastName, a.Username, a.`Password`, ad.`Number`,ad.Street, ad.District , ad.City \r\n"
+				+ "FROM `user` u \r\n"
+				+ "	join fullname f \r\n"
+				+ "	join `account` a \r\n"
+				+ "    join address ad\r\n"
+				+ "where u.FullnameID = f.ID and u.AccountID = a.ID and u.AddressID = ad.ID and u.ID = ?;";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
 		// set parameter
@@ -92,15 +112,27 @@ public class UserRepository implements IUserRepository {
 
 		// Step 5: handling result set
 		if (resultSet.next()) {
-//			User user = new User(
-//					resultSet.getInt("id"), 
-//					resultSet.getString("username"),
-//					resultSet.getString("fullName"), 
-//					resultSet.getString("role"));
+			User user = new User(
+					resultSet.getInt("ID"), 
+					resultSet.getString("Mobile"), 
+					resultSet.getString("Sex"),
+					resultSet.getString("DateOfBirth"));
+			FullName fullName = new FullName(
+					resultSet.getString("FirstName"), 
+					resultSet.getString("MiddleName"), 
+					resultSet.getString("LastName"));
+			Address address = new Address(
+					resultSet.getInt("Number"),
+					resultSet.getString("Street"),
+					resultSet.getString("District"),
+					resultSet.getString("City")
+					);
+			user.setFullName(fullName);
+			user.setAddress(address);
 
 			// disconnect
 			jdbcUtils.disconnect();
-			return null;
+			return user;
 
 		} else {
 			// disconnect
@@ -185,8 +217,8 @@ public class UserRepository implements IUserRepository {
 
 		// if not exist
 		// Create a statement object
-		String sql = "INSERT INTO `User` 	(username, password	, firstName	, lastName	) " 
-					+ "VALUE           		(   ? 	,   ?   	,   ?		,	?		)";
+		String sql = "INSERT INTO `User` 	(username, password	, firstName	, lastName	) "
+				+ "VALUE           		(   ? 	,   ?   	,   ?		,	?		)";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
 		// set parameter
@@ -194,7 +226,7 @@ public class UserRepository implements IUserRepository {
 		preparedStatement.setString(2, password);
 		preparedStatement.setString(3, firstName);
 		preparedStatement.setString(4, lastName);
-		
+
 		// Step 4: execute query
 		int check = preparedStatement.executeUpdate();
 
@@ -217,11 +249,8 @@ public class UserRepository implements IUserRepository {
 		Connection connection = jdbcUtils.connect();
 
 		// Create a statement object
-		String sql = 	"UPDATE 	`User` "
-					+ 	"SET 		password = ?, " 
-					+ 	" 			firstName = ?,"
-					+ 	" 			lastName = ? "
-					+ 	"WHERE 		id = ?";
+		String sql = "UPDATE 	`User` " + "SET 		password = ?, " + " 			firstName = ?,"
+				+ " 			lastName = ? " + "WHERE 		id = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
 		// set parameter
@@ -268,9 +297,10 @@ public class UserRepository implements IUserRepository {
 		jdbcUtils.disconnect();
 	}
 
-	/* 
-	* @see com.vti.datalayer.IUserRepository#login(java.lang.String, java.lang.String)
-	*/
+	/*
+	 * @see com.vti.datalayer.IUserRepository#login(java.lang.String,
+	 * java.lang.String)
+	 */
 	@Override
 	public User login(String username, String password) throws ClassNotFoundException, SQLException, IOException {
 
@@ -278,27 +308,128 @@ public class UserRepository implements IUserRepository {
 		Connection connection = jdbcUtils.connect();
 
 		// Create a statement object
-		String sql = 	"SELECT	`id`,	`username` " + 
-						"FROM 	`account` " + 
-						"WHERE 	`username` = ? AND `password` = ?";
+		String sql = "SELECT	`id`,	`username` " + "FROM 	`account` "
+				+ "WHERE 	`username` = ? AND `password` = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
 		// set parameter
 		preparedStatement.setString(1, username);
 		preparedStatement.setString(2, password);
-		
+
 		// Step 4: execute query
 		ResultSet resultSet = preparedStatement.executeQuery();
 
 		// Step 5: handling result set
 		if (resultSet.next()) {
-			Account account = new Account(
-					resultSet.getInt("id"), 
-					resultSet.getString("username"));
+			// get account
+			Account account = new Account(resultSet.getInt("id"), resultSet.getString("username"));
 			User user = new User(account);
 			// disconnect
 			jdbcUtils.disconnect();
 			return user;
+
+		} else {
+			// disconnect
+			jdbcUtils.disconnect();
+			return null;
+		}
+	}
+
+	/*
+	 * @see com.nhom3.logicApplication.IUserDAO#getUserByIdAccount(int)
+	 */
+	@Override
+	public User getUserByIdAccount(int idAccount) throws Exception {
+		// get connection
+		Connection connection = jdbcUtils.connect();
+
+		// Create a statement object
+		String sql = "SELECT	*" + "FROM 	`user` " + "WHERE 	`user`.AccountID = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+		// set parameter
+		preparedStatement.setInt(1, idAccount);
+
+		// Step 4: execute query
+		ResultSet resultSet = preparedStatement.executeQuery();
+
+		// Step 5: handling result set
+		if (resultSet.next()) {
+			// get user
+			User user = new User(resultSet.getInt("id"), resultSet.getString("mobile"), resultSet.getString("sex"),
+					resultSet.getString("DateOfBirth"), resultSet.getInt("FullnameID"), resultSet.getInt("AccountID"),
+					resultSet.getInt("AddressID"));
+			// disconnect
+			jdbcUtils.disconnect();
+			return user;
+
+		} else {
+			// disconnect
+			jdbcUtils.disconnect();
+			return null;
+		}
+	}
+
+	/*
+	 * @see com.nhom3.logicApplication.IUserDAO#getFullNameById(int)
+	 */
+	@Override
+	public FullName getFullNameById(int id) throws Exception {
+		// get connection
+		Connection connection = jdbcUtils.connect();
+
+		// Create a statement object
+		String sql = "SELECT	*" + "FROM 	`fullname` " + "WHERE 	`id` = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+		// set parameter
+		preparedStatement.setInt(1, id);
+
+		// Step 4: execute query
+		ResultSet resultSet = preparedStatement.executeQuery();
+
+		// Step 5: handling result set
+		if (resultSet.next()) {
+			// get account
+			FullName fullName = new FullName(resultSet.getInt("id"), resultSet.getString("FirstName"),
+					resultSet.getString("LastName"), resultSet.getString("MiddleName"));
+			// disconnect
+			jdbcUtils.disconnect();
+			return fullName;
+
+		} else {
+			// disconnect
+			jdbcUtils.disconnect();
+			return null;
+		}
+	}
+
+	/*
+	 * @see com.nhom3.logicApplication.IUserDAO#getAddressByID(int)
+	 */
+	@Override
+	public Address getAddressByID(int id) throws Exception {
+		// get connection
+		Connection connection = jdbcUtils.connect();
+
+		// Create a statement object
+		String sql = "SELECT	*" + "FROM 	`address` " + "WHERE 	`id` = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+		// set parameter
+		preparedStatement.setInt(1, id);
+
+		// Step 4: execute query
+		ResultSet resultSet = preparedStatement.executeQuery();
+
+		// Step 5: handling result set
+		if (resultSet.next()) {
+			// get account
+			Address address = new Address(resultSet.getInt("id"),resultSet.getInt("Number"), resultSet.getString("Street"),
+					resultSet.getString("District"), resultSet.getString("City"));
+			// disconnect
+			jdbcUtils.disconnect();
+			return address;
 
 		} else {
 			// disconnect

@@ -1,4 +1,4 @@
-/*
+
 $(function() {
 	var usernameCookie = getCookie("username");
 	var role = getCookie("role");
@@ -26,11 +26,11 @@ $(function() {
 });
 
 $(function() {
-	var role = getCookie("role");
+	var role = getCookie("username");
 
 	console.log(role);
 	console.log(3);
-	if (role == 'MANAGER' || role == 'EMPLOYEE' || role == 'ADMIN') {
+	if (role == 'tien' || role == 'EMPLOYEE' || role == 'ADMIN') {
 		console.log(1);
 		$("#manager-controller").show();
 	}
@@ -56,7 +56,7 @@ function getCookie(key) {
 	return "";
 }
 
-*/
+
 function clickNavHome() {
 	$(".main").load("jsp/home.jsp");
 }
@@ -89,7 +89,7 @@ function clickNavAccount() {
 	location.replace("./account")
 }
 
-function clickNavBook() {
+function clickNavBookManager() {
 	location.replace("./bookManager")
 }
 

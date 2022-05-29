@@ -20,6 +20,18 @@ public class FullName {
 	public FullName() {
 		super();
 	}
+	
+	public FullName(int id) {
+		super();
+		this.id = id;
+	}
+	
+	public FullName(String firstName, String middleName, String lastName) {
+		super();
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+	}
 
 	public FullName(int id, String firstName, String middleName, String lastName) {
 		super();
@@ -60,5 +72,13 @@ public class FullName {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
+	
+	/* 
+	* @see java.lang.Object#toString()
+	*/
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.firstName + this.middleName + this.lastName;
+	}
 }

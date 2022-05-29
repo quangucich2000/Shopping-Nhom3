@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 
 <head>
@@ -12,9 +13,20 @@
 
 <body>
 
-	<div class="header">
-		<jsp:include page="header.jsp"></jsp:include>
-	</div>
+	<header>
+		<nav class="navbar navbar-expand-md navbar-dark"
+			style="background-color: tomato">
+			<div>
+				<a href="https://www.javaguides.net" class="navbar-brand"> User
+					Management App </a>
+			</div>
+
+			<ul class="navbar-nav">
+				<li><a href="<%=request.getContextPath()%>/list"
+					class="nav-link">Users</a></li>
+			</ul>
+		</nav>
+	</header>
 	<br>
 
 	<div class="row">
@@ -25,7 +37,7 @@
 			<hr>
 			<div class="container text-left">
 
-				<a href="<%=request.getContextPath()%>/account/new" class="btn btn-success">Add
+				<a href="<%=request.getContextPath()%>/new" class="btn btn-success">Add
 					New User</a>
 			</div>
 			<br>
@@ -33,11 +45,12 @@
 				<thead>
 					<tr>
 						<th>ID</th>
-						<th>Username</th>
-						<th>Password</th>
-						<th>Fullname</th>
-						<th>Role</th>
-						<th>Actions</th>
+						<th>Full Name</th>
+						<th>Phone</th>
+						<th>Sex</th>
+						<th>Date Of Birth</th>
+						<th>Address</th>
+						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -46,13 +59,19 @@
 
 						<tr>
 							<td><c:out value="${user.id}" /></td>
-							<td><c:out value="${user.username}" /></td>
-							<td><c:out value="${user.password}" /></td>
-							<td><c:out value="${user.fullname}" /></td>
-							<td><c:out value="${user.role}" /></td>
-							<td><a href="edit?id=<c:out value='${user.id}' />">Edit</a>
+							<td><c:out value="${user.fullName.firstName}" />
+								<c:out value="${user.fullName.lastName}" />
+								<c:out value="${user.fullName.middleName}" /></td>
+							<td><c:out value="${user.mobile}" /></td>
+							<td><c:out value="${user.sex}" /></td>
+							<td><c:out value="${user.dateOfBirth}" /></td>
+							<td><c:out value="${user.address.number}" />-<c:out
+									value="${user.address.street}" />-<c:out
+									value="${user.address.district}" />-<c:out
+									value="${user.address.city}" /></td>
+							<td><a href="editUser?id=<c:out value='${user.id}' />">Edit</a>
 								&nbsp;&nbsp;&nbsp;&nbsp; <a
-								href="delete?id=<c:out value='${user.id}' />">Delete</a></td>
+								href="deleteUser?id=<c:out value='${user.id}' />">Delete</a></td>
 						</tr>
 					</c:forEach>
 					<!-- } -->
